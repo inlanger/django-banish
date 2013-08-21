@@ -35,6 +35,7 @@ class BanishMiddleware(object):
         self.ENABLED = getattr(settings, 'BANISH_ENABLED', False)
         self.DEBUG = getattr(settings, 'BANSIH_DEBUG', False)
         self.ABUSE_THRESHOLD = getattr(settings, 'BANSIH_ABUSE_THRESHOLD', 75)
+        self.MESSAGE = getattr(settings, 'BANSIH_MESSAGE', 'You are banned.')
 
         if not self.ENABLED:
             raise MiddleWareNotUsed("django-banish is not enabled via settings.py")
@@ -70,7 +71,7 @@ class BanishMiddleware(object):
        
         # Check ban conditions
         if self.is_banned(ip) or self.monitor_abuse(ip) or user_agent in self.BANNED_AGENTS:
-            return HttpResponseForbidden('You are banned.', mimetype="text/html")
+            return HttpResponseForbidden(self.MESSAGE, mimetype="text/html")
 
     def is_banned(self, ip):
         """
